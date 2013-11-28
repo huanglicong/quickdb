@@ -17,6 +17,9 @@ package org.hlc.quickdb.metadata;
 
 import java.lang.reflect.Field;
 
+import org.hlc.quickdb.sequence.SequenceGenerater;
+import org.hlc.quickdb.type.TypeHandler;
+
 // TODO: Auto-generated Javadoc
 /**
  * 字段元数据.
@@ -29,14 +32,14 @@ public class ColumnMetadata {
 	/** 字段名称. */
 	protected String name;
 
-	/** 字段类型. */
-	protected String type;
-
 	/** 是否是主键. */
 	protected boolean primaryKey;
 
-	/** 序列名称. */
-	private String sequence;
+	/** 序列生成器. */
+	private SequenceGenerater sequenceGenerater;
+
+	/** 类型处理器. */
+	private TypeHandler<?> typeHandler;
 
 	/** The field. */
 	private Field field;
@@ -53,15 +56,17 @@ public class ColumnMetadata {
 	 * Instantiates a new column metadata.
 	 * 
 	 * @param name the name
-	 * @param type the type
 	 * @param primaryKey the primary key
+	 * @param sequenceGenerater the sequence generater
+	 * @param typeHandler the type handler
 	 * @param field the field
 	 */
-	public ColumnMetadata(String name, String type, boolean primaryKey, Field field) {
-		super();
+	public ColumnMetadata(String name, boolean primaryKey, SequenceGenerater sequenceGenerater, TypeHandler<?> typeHandler, Field field) {
+
 		this.name = name;
-		this.type = type;
 		this.primaryKey = primaryKey;
+		this.sequenceGenerater = sequenceGenerater;
+		this.typeHandler = typeHandler;
 		this.field = field;
 	}
 
@@ -83,26 +88,6 @@ public class ColumnMetadata {
 	public void setName(String name) {
 
 		this.name = name;
-	}
-
-	/**
-	 * Gets the type.
-	 * 
-	 * @return the type
-	 */
-	public String getType() {
-
-		return type;
-	}
-
-	/**
-	 * Sets the type.
-	 * 
-	 * @param type the new type
-	 */
-	public void setType(String type) {
-
-		this.type = type;
 	}
 
 	/**
@@ -146,23 +131,43 @@ public class ColumnMetadata {
 	}
 
 	/**
-	 * Gets the sequence.
-	 *
-	 * @return the sequence
+	 * Gets the sequence generater.
+	 * 
+	 * @return the sequence generater
 	 */
-	public String getSequence() {
+	public SequenceGenerater getSequenceGenerater() {
 
-		return sequence;
+		return sequenceGenerater;
 	}
 
 	/**
-	 * Sets the sequence.
-	 *
-	 * @param sequence the new sequence
+	 * Sets the sequence generater.
+	 * 
+	 * @param sequenceGenerater the new sequence generater
 	 */
-	public void setSequence(String sequence) {
+	public void setSequenceGenerater(SequenceGenerater sequenceGenerater) {
 
-		this.sequence = sequence;
+		this.sequenceGenerater = sequenceGenerater;
+	}
+
+	/**
+	 * Gets the type handler.
+	 * 
+	 * @return the type handler
+	 */
+	public TypeHandler<?> getTypeHandler() {
+
+		return typeHandler;
+	}
+
+	/**
+	 * Sets the type handler.
+	 * 
+	 * @param typeHandler the new type handler
+	 */
+	public void setTypeHandler(TypeHandler<?> typeHandler) {
+
+		this.typeHandler = typeHandler;
 	}
 
 	/**
@@ -175,10 +180,12 @@ public class ColumnMetadata {
 		StringBuilder builder = new StringBuilder();
 		builder.append("ColumnMetadata [name=");
 		builder.append(name);
-		builder.append(", type=");
-		builder.append(type);
 		builder.append(", primaryKey=");
 		builder.append(primaryKey);
+		builder.append(", sequenceGenerater=");
+		builder.append(sequenceGenerater);
+		builder.append(", typeHandler=");
+		builder.append(typeHandler);
 		builder.append(", field=");
 		builder.append(field);
 		builder.append("]");

@@ -15,7 +15,6 @@
  */
 package org.hlc.quickdb.session.def;
 
-import org.hlc.quickdb.executor.Executor;
 import org.hlc.quickdb.session.Configuration;
 import org.hlc.quickdb.session.Session;
 import org.hlc.quickdb.session.SessionFactory;
@@ -38,8 +37,6 @@ public class DefaultSessionFactory implements SessionFactory {
 	@Override
 	public Session openSession() {
 
-		Executor executor = null;
-		return new DefaultSession(configuration, executor);
+		return new DefaultSession(configuration, configuration.newExecutor());
 	}
-
 }

@@ -33,14 +33,13 @@ public class SelectSqlBuilder extends BaseSqlBuilder {
 	private boolean capital;
 
 	public SelectSqlBuilder(TableMetadata table, boolean capital) {
-		
+
 		this.table = table;
 		this.capital = capital;
 	}
 
 	@Override
 	public String build() {
-
 
 		StringBuilder sql = new StringBuilder();
 
@@ -60,7 +59,7 @@ public class SelectSqlBuilder extends BaseSqlBuilder {
 		int index = 0;
 		while (keyIterator.hasNext()) {
 			temp = keyIterator.next();
-			sql.append(temp.getName()).append(" = #{" + temp.getField().getName() + ",jdbcType=" + temp.getType() + "}");
+			sql.append(temp.getName()).append(" = ${" + temp.getField().getName() + "}");
 			if (index < size - 1) {
 				sql.append(" and ");
 			}

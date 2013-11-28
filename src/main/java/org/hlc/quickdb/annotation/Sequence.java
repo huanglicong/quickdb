@@ -20,6 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.hlc.quickdb.sequence.SequenceGenerater;
+
 /**
  * 
  * 指定字段生成序列.
@@ -37,5 +39,13 @@ public @interface Sequence {
 	 * 
 	 * @return
 	 */
-	String value();
+	String value() default "";
+
+	/**
+	 * 
+	 * TODO.
+	 * 
+	 * @return
+	 */
+	Class<?> sequenceType() default SequenceGenerater.class;
 }

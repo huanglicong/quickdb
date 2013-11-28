@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 
 import org.hlc.quickdb.metadata.ColumnMetadata;
 import org.hlc.quickdb.metadata.TableMetadata;
+import org.hlc.quickdb.type.TypeHandlerRegistry;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,6 +29,11 @@ import org.hlc.quickdb.metadata.TableMetadata;
  * @since 1.0 2013年11月12日 下午3:39:25
  */
 public class DefaultAnnotationResolver extends AbstractAnnotationResolver {
+
+	public DefaultAnnotationResolver(TypeHandlerRegistry typeHandlerRegistry) {
+
+		super(typeHandlerRegistry);
+	}
 
 	/**
 	 * Resolve.

@@ -37,7 +37,7 @@ public class UpdateSqlBuilder extends BaseSqlBuilder {
 	private boolean capital;
 
 	public UpdateSqlBuilder(Object record, TableMetadata table, boolean selective, boolean capital) {
-		
+
 		this.record = record;
 		this.table = table;
 		this.selective = selective;
@@ -77,7 +77,7 @@ public class UpdateSqlBuilder extends BaseSqlBuilder {
 			} else {
 				sql.append(item.getName());
 			}
-			sql.append(" = #{" + item.getField().getName() + ",jdbcType=" + item.getType() + "}");
+			sql.append(" = ${" + item.getField().getName() + "}");
 			if (index < size - 1) {
 				sql.append(", ");
 			}
@@ -97,7 +97,7 @@ public class UpdateSqlBuilder extends BaseSqlBuilder {
 			if (getValue(record, temp.getField()) == null) {
 				throw new IllegalArgumentException(temp.getName() + "主键字段值不能为空");
 			}
-			sql.append(temp.getName()).append(" = #{" + temp.getField().getName() + ",jdbcType=" + temp.getType() + "}");
+			sql.append(temp.getName()).append(" = ${" + temp.getField().getName() + "}");
 			if (index < size - 1) {
 				sql.append(" and ");
 			}

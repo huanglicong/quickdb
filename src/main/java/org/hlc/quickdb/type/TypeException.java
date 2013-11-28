@@ -13,37 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.annotation;
+package org.hlc.quickdb.type;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.hlc.quickdb.exception.PersistenceException;
 
 /**
- * 
- * 将数据库字段与Java字段做映射.
+ * TODO.
  * 
  * @author huanglicong
- * @since 1.0 2013-6-30 下午8:02:12
+ * @since 1.0 2013年11月24日 上午11:55:15
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Column {
+public class TypeException extends PersistenceException {
 
-	/**
-	 * 
-	 * 告诉我你定义的数据库字段名称是什么.
-	 * 
-	 * @return
-	 */
-	String value() default "";
+	private static final long serialVersionUID = -5301939036673582219L;
 
-	/**
-	 * 
-	 * 告诉我你定义的哪种数据库类型.
-	 * 
-	 * @return
-	 */
-	int type() default Integer.MIN_VALUE;
+	public TypeException() {
+
+		super();
+	}
+
+	public TypeException(String arg0, Throwable arg1) {
+
+		super(arg0, arg1);
+	}
+
+	public TypeException(String arg0) {
+
+		super(arg0);
+	}
+
+	public TypeException(Throwable arg0) {
+
+		super(arg0);
+	}
+
 }

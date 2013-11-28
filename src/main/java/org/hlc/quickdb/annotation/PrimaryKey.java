@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 
 /**
  * 
- * 映射数据库表中的主键字段，如果标注多个字段，则表示被标注的多个字段组合成复合主键.
+ * 将数据库主键字段与Java字段做映射，复合主键重复标注.
  * 
  * @author huanglicong
  * @since 1.0 2013-6-30 下午8:08:26
@@ -33,7 +33,7 @@ public @interface PrimaryKey {
 
 	/**
 	 * 
-	 * 字段名称，默认为被标注类的字段名.
+	 * 告诉我你定义的数据库字段名称是什么.
 	 * 
 	 * @return
 	 */
@@ -41,13 +41,10 @@ public @interface PrimaryKey {
 
 	/**
 	 * 
-	 * 字段类型，默认为被标注类的字段类型。可以直接指定Java类，如<code>java.lang.String</code>，
-	 * 但默认要配置TypeConveter.
+	 * 告诉我你定义的哪种数据库类型.
 	 * 
-	 * @see org.hlc.quickdb.core.conveter.TypeConveter
-	 * @see org.hlc.quickdb.core.resolver.impl.resolver.SchemaResolverFactory
 	 * @return
 	 */
-	String type() default "";
+	int type() default Integer.MIN_VALUE;
 
 }

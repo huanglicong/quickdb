@@ -216,7 +216,11 @@ public class DefaultSession implements Session {
 	@Override
 	public void close() {
 
-		executor.close();
+		try {
+			executor.close();
+		} catch (SQLException e) {
+			throw new SessionException("关闭执行器错误", e);
+		}
 	}
 
 	/**

@@ -13,37 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.annotation;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.hlc.quickdb.util;
 
 /**
- * 
- * 将数据库字段与Java字段做映射.
+ * TODO.
  * 
  * @author huanglicong
- * @since 1.0 2013-6-30 下午8:02:12
+ * @since 1.0 2013年11月24日 上午12:40:46
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Column {
+public class ArrayUtils {
 
-	/**
-	 * 
-	 * 告诉我你定义的数据库字段名称是什么.
-	 * 
-	 * @return
-	 */
-	String value() default "";
+	public static byte[] convertToPrimitiveArray(Byte[] objects) {
+		final byte[] bytes = new byte[objects.length];
+		for (int i = 0; i < objects.length; i++) {
+			Byte b = objects[i];
+			bytes[i] = b;
+		}
+		return bytes;
+	}
 
-	/**
-	 * 
-	 * 告诉我你定义的哪种数据库类型.
-	 * 
-	 * @return
-	 */
-	int type() default Integer.MIN_VALUE;
+	public static Byte[] convertToObjectArray(byte[] bytes) {
+		final Byte[] objects = new Byte[bytes.length];
+		for (int i = 0; i < bytes.length; i++) {
+			byte b = bytes[i];
+			objects[i] = b;
+		}
+		return objects;
+	}
+
 }

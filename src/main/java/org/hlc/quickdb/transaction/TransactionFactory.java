@@ -30,7 +30,7 @@ public interface TransactionFactory {
 
 	/**
 	 * New transaction.
-	 *
+	 * 
 	 * @param conn the conn
 	 * @return the transaction
 	 */
@@ -38,12 +38,10 @@ public interface TransactionFactory {
 
 	/**
 	 * New transaction.
-	 *
+	 * 
 	 * @param dataSource the data source
-	 * @param level the level
-	 * @param autoCommit the auto commit
 	 * @return the transaction
 	 */
-	Transaction newTransaction(DataSource dataSource, int level, boolean autoCommit);
+	Transaction newTransaction(DataSource dataSource);
 
 }

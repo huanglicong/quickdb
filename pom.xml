@@ -90,6 +90,11 @@
 			<version>${log4j-version}</version>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>ognl</groupId>
+			<artifactId>ognl</artifactId>
+			<version>3.0.8</version>
+		</dependency>
 	</dependencies>
 
 	<reporting>

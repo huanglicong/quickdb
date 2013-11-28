@@ -69,7 +69,7 @@ public class InsertSqlBuilder extends BaseSqlBuilder {
 			} else {
 				before.append(item.getName());
 			}
-			after.append("#{" + item.getField().getName() + ",jdbcType=" + item.getType() + "}");
+			after.append("${" + item.getField().getName() + "}");
 			if (index < size - 1) {
 				before.append(", ");
 				after.append(", ");

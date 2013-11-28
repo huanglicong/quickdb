@@ -26,11 +26,16 @@ import org.hlc.quickdb.builder.InsertSqlBuilder;
 import org.hlc.quickdb.builder.SelectSqlBuilder;
 import org.hlc.quickdb.builder.SqlBuilder;
 import org.hlc.quickdb.builder.SqlCommandType;
+import org.hlc.quickdb.builder.SqlSource;
 import org.hlc.quickdb.builder.UpdateSqlBuilder;
 import org.hlc.quickdb.executor.Executor;
+import org.hlc.quickdb.executor.SimpleExecutor;
 import org.hlc.quickdb.metadata.TableMetadata;
+import org.hlc.quickdb.statement.PreparedStatementHandler;
+import org.hlc.quickdb.statement.StatementHandler;
 import org.hlc.quickdb.transaction.Transaction;
 import org.hlc.quickdb.transaction.TransactionFactory;
+import org.hlc.quickdb.type.TypeHandlerRegistry;
 
 /**
  * TODO.
@@ -45,13 +50,15 @@ public class Configuration {
 
 	private final TransactionFactory transactionFactory;
 	private final DataSource dataSource;
+	private TypeHandlerRegistry typeHandlerRegistry;
 
 	private boolean capital = true;
 
 	public Configuration(TransactionFactory transactionFactory, DataSource dataSource) {
-		super();
+
 		this.transactionFactory = transactionFactory;
 		this.dataSource = dataSource;
+		this.typeHandlerRegistry = new TypeHandlerRegistry();
 	}
 
 	public TableMetadata put(Class<?> arg0, TableMetadata arg1) {
@@ -83,8 +90,15 @@ public class Configuration {
 		return table;
 	}
 
-	public Executor newExecutor(Transaction transaction) {
-		return null;
+	public Executor newExecutor() {
+
+		Transaction transaction = transactionFactory.newTransaction(dataSource);
+		return new SimpleExecutor(transaction, this);
+	}
+
+	public StatementHandler newStatementHandler(SqlSource sqlSource) {
+
+		return new PreparedStatementHandler(sqlSource);
 	}
 
 	public boolean isCapital() {
@@ -105,6 +119,16 @@ public class Configuration {
 	public DataSource getDataSource() {
 
 		return dataSource;
+	}
+
+	public TypeHandlerRegistry getTypeHandlerRegistry() {
+
+		return typeHandlerRegistry;
+	}
+
+	public void setTypeHandlerRegistry(TypeHandlerRegistry typeHandlerRegistry) {
+
+		this.typeHandlerRegistry = typeHandlerRegistry;
 	}
 
 }

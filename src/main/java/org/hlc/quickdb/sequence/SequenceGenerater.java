@@ -13,37 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.annotation;
+package org.hlc.quickdb.sequence;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.hlc.quickdb.annotation.Sequence;
+import org.hlc.quickdb.session.Session;
 
 /**
- * 
- * 将数据库字段与Java字段做映射.
+ * 序列生成器接口，用于生成{@link Sequence}注解字段的值.
  * 
  * @author huanglicong
- * @since 1.0 2013-6-30 下午8:02:12
+ * @since 1.0 2013年11月24日 下午1:05:11
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Column {
+public interface SequenceGenerater {
 
-	/**
-	 * 
-	 * 告诉我你定义的数据库字段名称是什么.
-	 * 
-	 * @return
-	 */
-	String value() default "";
-
-	/**
-	 * 
-	 * 告诉我你定义的哪种数据库类型.
-	 * 
-	 * @return
-	 */
-	int type() default Integer.MIN_VALUE;
+	void generation(Object bean, Session session);
 }

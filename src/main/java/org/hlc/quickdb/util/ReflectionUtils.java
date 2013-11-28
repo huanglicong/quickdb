@@ -152,7 +152,7 @@ public class ReflectionUtils {
 			return null;
 		}
 		makeAccessible(method);
-		return method.invoke(method, target);
+		return method.invoke(target);
 	}
 
 	/**

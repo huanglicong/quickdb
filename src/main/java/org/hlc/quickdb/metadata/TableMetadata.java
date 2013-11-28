@@ -22,8 +22,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hlc.quickdb.util.StringUtils;
-
 // TODO: Auto-generated Javadoc
 /**
  * TODO.
@@ -78,7 +76,7 @@ public class TableMetadata {
 		if (arg0.primaryKey) {
 			primarykeys.add(arg0);
 		}
-		if (StringUtils.isEmpty(arg0.getSequence())) {
+		if (arg0.getSequenceGenerater() != null) {
 			sequencekeys.add(arg0);
 		}
 		return columns.add(arg0);
@@ -96,7 +94,7 @@ public class TableMetadata {
 			if (item.primaryKey) {
 				primarykeys.add(item);
 			}
-			if (StringUtils.isEmpty(item.getSequence())) {
+			if (item.getSequenceGenerater() != null) {
 				sequencekeys.add(item);
 			}
 		}
@@ -288,6 +286,24 @@ public class TableMetadata {
 		Set<ColumnMetadata> columns = new LinkedHashSet<ColumnMetadata>(this.columns);
 		columns.removeAll(primarykeys);
 		return columns;
+	}
+
+	/**
+	 * Find column metadata.
+	 * 
+	 * @param columnName the column name
+	 * @return the column metadata
+	 */
+	public ColumnMetadata findColumnMetadata(String columnName) {
+
+		ColumnMetadata temp = null;
+		for (ColumnMetadata item : columns) {
+			if (item.getName().equals(columnName)) {
+				temp = item;
+				break;
+			}
+		}
+		return temp;
 	}
 
 	/**

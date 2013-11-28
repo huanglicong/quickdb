@@ -13,37 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.annotation;
+package org.hlc.quickdb.statement;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 
 /**
- * 
- * 将数据库字段与Java字段做映射.
+ * TODO.
  * 
  * @author huanglicong
- * @since 1.0 2013-6-30 下午8:02:12
+ * @since 1.0 2013年11月22日 下午5:19:51
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Column {
+public interface StatementHandler {
+	
+	Statement prepare(Connection connection) throws SQLException;
 
-	/**
-	 * 
-	 * 告诉我你定义的数据库字段名称是什么.
-	 * 
-	 * @return
-	 */
-	String value() default "";
+	void parameterize(Statement statement) throws SQLException;
 
-	/**
-	 * 
-	 * 告诉我你定义的哪种数据库类型.
-	 * 
-	 * @return
-	 */
-	int type() default Integer.MIN_VALUE;
+	void batch(Statement statement) throws SQLException;
+
+	int update(Statement statement) throws SQLException;
+
+	<E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException;
+
 }

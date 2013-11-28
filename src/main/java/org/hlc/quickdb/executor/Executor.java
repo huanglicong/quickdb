@@ -38,7 +38,7 @@ public interface Executor {
 
 	Transaction getTransaction();
 
-	void close();
+	void close() throws SQLException;
 
 	boolean isClosed();
 
