@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.sequence;
+package org.hlc.quickdb.executor.sequence;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class OracleSequenceGenerater implements SequenceGenerater {
 			return;
 		}
 		for (ColumnMetadata item : columns) {
-			Long id = session.selectOne("SELECT " + sequenceName + ".NEXTVAL FROM DUAL", Long.class);
+			Long id = session.selectOne("SELECT " + sequenceName + ".NEXTVAL FROM DUAL", null, Long.class);
 			if (id != null && item.getField().getType() == String.class) {
 				BaseSqlBuilder.setValue(bean, id.toString(), item.getField());
 			} else {

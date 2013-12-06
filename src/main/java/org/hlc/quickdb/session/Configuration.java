@@ -29,12 +29,17 @@ import org.hlc.quickdb.builder.SqlCommandType;
 import org.hlc.quickdb.builder.SqlSource;
 import org.hlc.quickdb.builder.UpdateSqlBuilder;
 import org.hlc.quickdb.executor.Executor;
-import org.hlc.quickdb.executor.SimpleExecutor;
+import org.hlc.quickdb.executor.JdbcExecutor;
+import org.hlc.quickdb.executor.parameter.handler.AbstractParameterResolver;
+import org.hlc.quickdb.executor.parameter.handler.ParameterResolverFactory;
+import org.hlc.quickdb.executor.result.ResultHandler;
+import org.hlc.quickdb.executor.result.ResultHandlerFactory;
+import org.hlc.quickdb.executor.statement.PreparedStatementHandler;
+import org.hlc.quickdb.executor.statement.StatementHandler;
 import org.hlc.quickdb.metadata.TableMetadata;
-import org.hlc.quickdb.statement.PreparedStatementHandler;
-import org.hlc.quickdb.statement.StatementHandler;
 import org.hlc.quickdb.transaction.Transaction;
 import org.hlc.quickdb.transaction.TransactionFactory;
+import org.hlc.quickdb.type.TypeHandler;
 import org.hlc.quickdb.type.TypeHandlerRegistry;
 
 /**
@@ -51,6 +56,8 @@ public class Configuration {
 	private final TransactionFactory transactionFactory;
 	private final DataSource dataSource;
 	private TypeHandlerRegistry typeHandlerRegistry;
+	private ParameterResolverFactory parameterResolverFactory;
+	private ResultHandlerFactory resultHandlerFactory;
 
 	private boolean capital = true;
 
@@ -59,6 +66,8 @@ public class Configuration {
 		this.transactionFactory = transactionFactory;
 		this.dataSource = dataSource;
 		this.typeHandlerRegistry = new TypeHandlerRegistry();
+		this.parameterResolverFactory = new ParameterResolverFactory(this);
+		this.resultHandlerFactory = new ResultHandlerFactory(this);
 	}
 
 	public TableMetadata put(Class<?> arg0, TableMetadata arg1) {
@@ -90,44 +99,49 @@ public class Configuration {
 		return table;
 	}
 
-	public Executor newExecutor() {
+	public TypeHandler<?> findTypeHandler(Class<?> type) {
+		return typeHandlerRegistry.getHandler(type);
+	}
 
+	public Executor newExecutor() {
 		Transaction transaction = transactionFactory.newTransaction(dataSource);
-		return new SimpleExecutor(transaction, this);
+		return new JdbcExecutor(transaction, this);
 	}
 
 	public StatementHandler newStatementHandler(SqlSource sqlSource) {
-
 		return new PreparedStatementHandler(sqlSource);
 	}
 
-	public boolean isCapital() {
+	public <E> ResultHandler<E> newResultHandler(Class<E> resultType) {
 
+		return resultHandlerFactory.createResultHandler(resultType);
+	}
+
+	public AbstractParameterResolver newParameterResolver(Class<?> paramType, Object target) {
+		return parameterResolverFactory.createParameterResolver(paramType, target);
+	}
+
+	public boolean isCapital() {
 		return capital;
 	}
 
 	public void setCapital(boolean capital) {
-
 		this.capital = capital;
 	}
 
 	public TransactionFactory getTransactionFactory() {
-
 		return transactionFactory;
 	}
 
 	public DataSource getDataSource() {
-
 		return dataSource;
 	}
 
 	public TypeHandlerRegistry getTypeHandlerRegistry() {
-
 		return typeHandlerRegistry;
 	}
 
 	public void setTypeHandlerRegistry(TypeHandlerRegistry typeHandlerRegistry) {
-
 		this.typeHandlerRegistry = typeHandlerRegistry;
 	}
 

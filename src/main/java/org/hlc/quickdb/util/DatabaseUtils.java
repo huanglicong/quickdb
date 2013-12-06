@@ -13,29 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.statement;
+package org.hlc.quickdb.util;
 
-import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
+
+import org.hlc.quickdb.exception.PersistenceException;
 
 /**
  * TODO.
  * 
  * @author huanglicong
- * @since 1.0 2013年11月22日 下午5:19:51
+ * @since 1.0 2013年11月29日 下午3:06:37
  */
-public interface StatementHandler {
-	
-	Statement prepare(Connection connection) throws SQLException;
+public class DatabaseUtils {
 
-	void parameterize(Statement statement) throws SQLException;
+	private DatabaseUtils() {
+	}
 
-	void batch(Statement statement) throws SQLException;
+	public static void colseStatement(Statement statement) {
 
-	int update(Statement statement) throws SQLException;
+		if (statement != null) {
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				throw new PersistenceException(e);
+			}
+		}
+	}
 
-	<E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException;
+	public static void colseResultSet(ResultSet resultSet) {
+
+		if (resultSet != null) {
+			try {
+				resultSet.close();
+			} catch (SQLException e) {
+				throw new PersistenceException(e);
+			}
+		}
+	}
 
 }

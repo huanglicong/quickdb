@@ -17,7 +17,7 @@ package org.hlc.quickdb.metadata;
 
 import java.lang.reflect.Field;
 
-import org.hlc.quickdb.sequence.SequenceGenerater;
+import org.hlc.quickdb.executor.sequence.SequenceGenerater;
 import org.hlc.quickdb.type.TypeHandler;
 
 // TODO: Auto-generated Javadoc

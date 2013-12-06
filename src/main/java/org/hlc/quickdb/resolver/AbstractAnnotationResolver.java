@@ -21,10 +21,10 @@ import org.hlc.quickdb.annotation.Column;
 import org.hlc.quickdb.annotation.PrimaryKey;
 import org.hlc.quickdb.annotation.Sequence;
 import org.hlc.quickdb.annotation.Table;
+import org.hlc.quickdb.executor.sequence.OracleSequenceGenerater;
+import org.hlc.quickdb.executor.sequence.SequenceGenerater;
 import org.hlc.quickdb.metadata.ColumnMetadata;
 import org.hlc.quickdb.metadata.TableMetadata;
-import org.hlc.quickdb.sequence.OracleSequenceGenerater;
-import org.hlc.quickdb.sequence.SequenceGenerater;
 import org.hlc.quickdb.type.TypeHandler;
 import org.hlc.quickdb.type.TypeHandlerRegistry;
 import org.hlc.quickdb.util.ObjectUtils;
@@ -97,8 +97,8 @@ public abstract class AbstractAnnotationResolver implements AnnotationResolver {
 				columnName = field.getName();
 			}
 			TypeHandler<?> typeHandler = null;
-			if (column.type() != Integer.MIN_VALUE) {
-				typeHandler = typeHandlerRegistry.getHandler(field.getType(), column.type());
+			if (key.type() != Integer.MIN_VALUE) {
+				typeHandler = typeHandlerRegistry.getHandler(field.getType(), key.type());
 			}
 			if (typeHandler == null) {
 				typeHandler = typeHandlerRegistry.getHandler(field.getType());

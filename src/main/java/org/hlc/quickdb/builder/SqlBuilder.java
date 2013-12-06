@@ -7,19 +7,19 @@ package org.hlc.quickdb.builder;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class RepositorySqlBuilder.
+ * 
+ * TODO.
  * 
  * @author huanglicong
- * @since social-api-core
- * @version V1.3
+ * @version V1.0
  */
 public interface SqlBuilder {
 
 	/**
-	 * Builds the sql.
-	 *
-	 * @return the string
+	 * 构建SqlSource.
+	 * 
+	 * @return the sql source
 	 */
-	String build();
+	SqlSource build();
 
 }

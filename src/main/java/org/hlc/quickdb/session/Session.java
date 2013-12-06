@@ -79,14 +79,6 @@ public interface Session extends Closeable {
 	// ////////////////////////////////SQL操作////////////////////////////////
 
 	/**
-	 * 更新SQL.
-	 * 
-	 * @param sql the sql
-	 * @return the int
-	 */
-	int executeUpdate(String sql);
-
-	/**
 	 * 更新SQL，支持ognl表达式，参数来源于params对象.
 	 * 
 	 * @param sql the sql
@@ -94,16 +86,6 @@ public interface Session extends Closeable {
 	 * @return the int
 	 */
 	int executeUpdate(String sql, Object params);
-
-	/**
-	 * 执行查询SQL，返回至多一条记录.
-	 * 
-	 * @param <T> the generic type
-	 * @param sql the sql
-	 * @param resultType the result type
-	 * @return the t
-	 */
-	<T> T selectOne(String sql, Class<T> resultType);
 
 	/**
 	 * 执行查询SQL，返回至多一条记录，支持ognl表达式，参数来源于params对象.
@@ -117,14 +99,6 @@ public interface Session extends Closeable {
 	<T> T selectOne(String sql, Object params, Class<T> resultType);
 
 	/**
-	 * 执行统计SQL.
-	 * 
-	 * @param sql the sql
-	 * @return the int
-	 */
-	int selectCount(String sql);
-
-	/**
 	 * 执行统计SQL，支持ognl表达式，参数来源于params对象.
 	 * 
 	 * @param sql the sql
@@ -132,16 +106,6 @@ public interface Session extends Closeable {
 	 * @return the int
 	 */
 	int selectCount(String sql, Object params);
-
-	/**
-	 * 执行查询SQL，返回多条记录.
-	 * 
-	 * @param <T> the generic type
-	 * @param sql the sql
-	 * @param resultType the result type
-	 * @return the list
-	 */
-	<T> List<T> selectList(String sql, Class<T> resultType);
 
 	/**
 	 * 执行查询SQL，返回多条记录，支持ognl表达式，参数来源于params对象.
@@ -153,6 +117,12 @@ public interface Session extends Closeable {
 	 * @return the list
 	 */
 	<T> List<T> selectList(String sql, Object params, Class<T> resultType);
+
+	// ////////////////////////////////存储过程操作////////////////////////////////
+
+	int executeCallable(String call, Object params);
+
+	<T> List<T> queryCallable(String call, Object params, Class<T> resultType);
 
 	// ////////////////////////////////事务操作////////////////////////////////
 

@@ -61,15 +61,6 @@ public class DefaultSession implements Session {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int executeUpdate(String sql) {
-
-		return executeUpdate(sql, null);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public int executeUpdate(String sql, Object record) {
 
 		return executor.doUpdate(sql, record);
@@ -110,18 +101,8 @@ public class DefaultSession implements Session {
 	 */
 	@Override
 	public int removeById(Class<?> type, Object id) {
-
 		String sql = configuration.newSqlBuilder(type, null, false, SqlCommandType.UPDATE).build();
 		return executeUpdate(sql, id);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <T> T selectOne(String sql, Class<T> resultType) {
-
-		return selectOne(sql, null, resultType);
 	}
 
 	/**
@@ -142,7 +123,6 @@ public class DefaultSession implements Session {
 	 */
 	@Override
 	public <T> T selectById(Class<T> type, Object id) {
-
 		String sql = configuration.newSqlBuilder(type, null, false, SqlCommandType.UPDATE).build();
 		return selectOne(sql, id, type);
 	}
@@ -151,17 +131,7 @@ public class DefaultSession implements Session {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int selectCount(String sql) {
-
-		return selectCount(sql, null);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public int selectCount(String sql, Object params) {
-
 		Integer count = selectOne(sql, params, Integer.class);
 		return (count == null ? 0 : count.intValue());
 	}
@@ -170,17 +140,7 @@ public class DefaultSession implements Session {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <T> List<T> selectList(String sql, Class<T> resultType) {
-
-		return selectList(sql, null, resultType);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public <T> List<T> selectList(String sql, Object params, Class<T> resultType) {
-
 		return executor.doQuery(sql, params, resultType);
 	}
 
@@ -241,8 +201,17 @@ public class DefaultSession implements Session {
 	 */
 	@Override
 	public Configuration getConfiguration() {
-
 		return this.configuration;
+	}
+
+	@Override
+	public int executeCallable(String call, Object params) {
+		return executor.doUpdateCallable(call, params);
+	}
+
+	@Override
+	public <T> List<T> queryCallable(String call, Object params, Class<T> resultType) {
+		return executor.doQueryCallable(call, params, resultType);
 	}
 
 }

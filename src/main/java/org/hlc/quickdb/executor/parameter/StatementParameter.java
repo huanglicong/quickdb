@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.statement;
+package org.hlc.quickdb.executor.parameter;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.hlc.quickdb.sequence.SequenceGenerater;
+import org.hlc.quickdb.exception.PersistenceException;
+import org.hlc.quickdb.executor.sequence.SequenceGenerater;
 import org.hlc.quickdb.type.TypeHandler;
 
 /**
- * TODO.
+ * 封装Statement执行SQL所需的参数.
  * 
  * @author huanglicong
  * @since 1.0 2013年11月23日 下午11:11:55
  */
-public class StatementParameter {
+public class StatementParameter<T> {
 
 	private int index;
 	private String name;
-	private TypeHandler<?> typeHandler;
+	private TypeHandler<T> typeHandler;
 	private SequenceGenerater sequenceGenerater;
-	private Object value;
+	private T value;
 	private int jdbcType;
 
-	public StatementParameter(String name, int index, int jdbcType, TypeHandler<?> typeHandler, SequenceGenerater sequenceGenerater, Object value) {
+	public StatementParameter(String name, int index, int jdbcType, TypeHandler<T> typeHandler, SequenceGenerater sequenceGenerater, T value) {
 
 		this.index = index;
 		this.name = name;
@@ -45,10 +48,13 @@ public class StatementParameter {
 		this.jdbcType = jdbcType;
 	}
 
-	public void parameterize(Statement statement) {
+	public void parameterize(Statement statement) throws SQLException {
 
-		// typeHandler.setParameter((PreparedStatement) statement, index, value,
-		// jdbcType);
+		if (statement instanceof PreparedStatement) {
+			typeHandler.setParameter((PreparedStatement) statement, index, value, jdbcType);
+		} else {
+			throw new PersistenceException(statement.getClass() + "不是PreparedStatement类型");
+		}
 	}
 
 	public String getName() {
@@ -66,17 +72,17 @@ public class StatementParameter {
 		return typeHandler;
 	}
 
-	public void setTypeHandler(TypeHandler<?> typeHandler) {
+	public void setTypeHandler(TypeHandler<T> typeHandler) {
 
 		this.typeHandler = typeHandler;
 	}
 
-	public Object getValue() {
+	public T getValue() {
 
 		return value;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(T value) {
 
 		this.value = value;
 	}
@@ -89,6 +95,26 @@ public class StatementParameter {
 	public void setSequenceGenerater(SequenceGenerater sequenceGenerater) {
 
 		this.sequenceGenerater = sequenceGenerater;
+	}
+
+	public int getIndex() {
+
+		return index;
+	}
+
+	public void setIndex(int index) {
+
+		this.index = index;
+	}
+
+	public int getJdbcType() {
+
+		return jdbcType;
+	}
+
+	public void setJdbcType(int jdbcType) {
+
+		this.jdbcType = jdbcType;
 	}
 
 }

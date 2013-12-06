@@ -13,18 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.sequence;
+package org.hlc.quickdb.executor.parameter.handler;
 
-import org.hlc.quickdb.annotation.Sequence;
-import org.hlc.quickdb.session.Session;
+import org.hlc.quickdb.builder.BuilderException;
 
 /**
- * 序列生成器接口，用于生成{@link Sequence}注解字段的值.
+ * 由于SQL中不含有OGNL表达式，因此该对象不会被调用.
  * 
  * @author huanglicong
- * @since 1.0 2013年11月24日 下午1:05:11
+ * @since 1.0 2013年11月29日 上午10:14:58
  */
-public interface SequenceGenerater {
+public class EmptyParameterResolver extends AbstractParameterResolver {
 
-	void generation(Object bean, Session session);
+	public EmptyParameterResolver(Object target) {
+
+		super(target);
+	}
+
+	@Override
+	public String handler(int index, String paramName) {
+
+		throw new BuilderException("由于由于SQL中不含有OGNL表达式，该方法不应该被调用");
+	}
+
 }

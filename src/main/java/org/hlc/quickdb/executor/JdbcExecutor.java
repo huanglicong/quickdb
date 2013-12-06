@@ -22,10 +22,11 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hlc.quickdb.builder.SqlSource;
+import org.hlc.quickdb.executor.statement.StatementHandler;
 import org.hlc.quickdb.session.Configuration;
 import org.hlc.quickdb.session.SessionException;
-import org.hlc.quickdb.statement.StatementHandler;
 import org.hlc.quickdb.transaction.Transaction;
+import org.hlc.quickdb.util.DatabaseUtils;
 
 /**
  * TODO.
@@ -33,7 +34,7 @@ import org.hlc.quickdb.transaction.Transaction;
  * @author huanglicong
  * @since 1.0 2013年11月22日 下午12:47:33
  */
-public class SimpleExecutor implements Executor {
+public class JdbcExecutor implements Executor {
 
 	/** The logger. */
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -41,7 +42,7 @@ public class SimpleExecutor implements Executor {
 	private final Configuration configuration;
 	private boolean closed;
 
-	public SimpleExecutor(Transaction transaction, Configuration configuration) {
+	public JdbcExecutor(Transaction transaction, Configuration configuration) {
 
 		this.transaction = transaction;
 		this.configuration = configuration;
@@ -53,18 +54,17 @@ public class SimpleExecutor implements Executor {
 		if (logger.isDebugEnabled()) {
 			logger.debug(sql);
 		}
-		SqlSource sqlSource = new SqlSource(sql, params, configuration);
-		StatementHandler statementHandler = configuration.newStatementHandler(sqlSource);
+		SqlSource wsql = new SqlSource(sql, params, configuration);
+		StatementHandler statementHandler = configuration.newStatementHandler(wsql);
 		try {
 			Statement statement = statementHandler.prepare(transaction.getConnection());
 			if (params != null) {
 				statementHandler.parameterize(statement);
 			}
-			statementHandler.update(statement);
+			return statementHandler.update(statement);
 		} catch (SQLException e) {
 			throw new SessionException("执行更新错误", e);
 		}
-		return 0;
 	}
 
 	@Override
@@ -73,7 +73,20 @@ public class SimpleExecutor implements Executor {
 		if (logger.isDebugEnabled()) {
 			logger.debug(sql);
 		}
-		return null;
+		SqlSource wsql = new SqlSource(sql, params, configuration);
+		StatementHandler statementHandler = configuration.newStatementHandler(wsql);
+		Statement statement = null;
+		try {
+			statement = statementHandler.prepare(transaction.getConnection());
+			if (params != null) {
+				statementHandler.parameterize(statement);
+			}
+			return statementHandler.query(statement, configuration.newResultHandler(type));
+		} catch (SQLException e) {
+			throw new SessionException("执行查询错误", e);
+		} finally {
+			DatabaseUtils.colseStatement(statement);
+		}
 	}
 
 	@Override
@@ -105,6 +118,22 @@ public class SimpleExecutor implements Executor {
 	public boolean isClosed() {
 
 		return closed;
+	}
+
+	@Override
+	public int doUpdateCallable(String call, Object params) {
+
+		// TODO Auto-generated method stub
+		return 0;
+
+	}
+
+	@Override
+	public <T> List<T> doQueryCallable(String call, Object params, Class<T> resultType) {
+
+		// TODO Auto-generated method stub
+		return null;
+
 	}
 
 }

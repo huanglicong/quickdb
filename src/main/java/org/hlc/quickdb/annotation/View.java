@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2002-2013 the original author or authors.
  *
@@ -14,15 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.statement;
+package org.hlc.quickdb.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * TODO.
- *
+ * 对应数据库视图.
+ * 
  * @author huanglicong
- * @since 1.0 2013年11月22日 下午5:51:55
+ * @since 1.0 2013年12月4日 上午10:56:14
  */
-public interface ResultHandler {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface View {
 
+	/**
+	 * 
+	 * 视图名称，默认为被标注类的类名.
+	 * 
+	 * @return
+	 */
+	String value() default "";
 }
-

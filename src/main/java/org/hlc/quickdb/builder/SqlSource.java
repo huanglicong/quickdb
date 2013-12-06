@@ -17,25 +17,26 @@ package org.hlc.quickdb.builder;
 
 import java.util.List;
 
+import org.hlc.quickdb.executor.parameter.StatementParameter;
+import org.hlc.quickdb.executor.parameter.handler.AbstractParameterResolver;
 import org.hlc.quickdb.session.Configuration;
-import org.hlc.quickdb.statement.StatementParameter;
-import org.hlc.quickdb.statement.StatementParameterHandler;
 import org.hlc.quickdb.util.GenericTokenParser;
 
 /**
- * TODO.
+ * 
+ * 对SQL以及SQL相关的参数进行封装，需要支持批处理是需要的参数集合.
  * 
  * @author huanglicong
- * @since 1.0 2013年11月22日 下午6:23:34
+ * @version V1.0
  */
 public class SqlSource {
 
-	private String sql;
-	private final List<StatementParameter> params;
+	private final String sql;
+	private final List<StatementParameter<?>> params;
 
 	public SqlSource(String sql, Object params, Configuration configuration) {
 
-		StatementParameterHandler parameterHandler = new StatementParameterHandler(configuration, params);
+		AbstractParameterResolver parameterHandler = configuration.newParameterResolver((params == null ? null : params.getClass()), params);
 		GenericTokenParser parser = new GenericTokenParser("${", "}", parameterHandler);
 		this.sql = parser.parse(sql);
 		this.params = parameterHandler.getStatementParameterList();
@@ -46,12 +47,7 @@ public class SqlSource {
 		return sql;
 	}
 
-	public void setSql(String sql) {
-
-		this.sql = sql;
-	}
-
-	public List<StatementParameter> getParams() {
+	public List<StatementParameter<?>> getParams() {
 
 		return params;
 	}

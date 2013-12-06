@@ -13,39 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.annotation;
+package org.hlc.quickdb.executor.result;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import org.hlc.quickdb.executor.sequence.SequenceGenerater;
+import java.sql.ResultSet;
+import java.util.List;
+import java.util.Map;
 
 /**
- * 
- * 指定字段生成序列.
+ * TODO.
  * 
  * @author huanglicong
- * @since 1.0 2013年11月18日 下午4:47:41
+ * @since 1.0 2013年11月29日 下午12:00:55
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Sequence {
+public class MapResultHandler implements ResultHandler<Map<String, Object>> {
 
-	/**
-	 * 
-	 * 设置序列名称.
-	 * 
-	 * @return
-	 */
-	String value() default "";
+	@Override
+	public List<Map<String, Object>> handleResult(ResultSet resultSet) {
 
-	/**
-	 * 
-	 * TODO.
-	 * 
-	 * @return
-	 */
-	Class<?> sequenceType() default SequenceGenerater.class;
+		return null;
+	}
+
 }

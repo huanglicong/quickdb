@@ -13,39 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hlc.quickdb.annotation;
+package org.hlc.quickdb.executor.statement;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 
-import org.hlc.quickdb.executor.sequence.SequenceGenerater;
+import org.hlc.quickdb.executor.result.ResultHandler;
 
 /**
  * 
- * 指定字段生成序列.
+ * Statement处理器，定义Statement的创建，参数装配，执行等方法，本质是对Statement相关操作进行封装.
  * 
  * @author huanglicong
- * @since 1.0 2013年11月18日 下午4:47:41
+ * @version V1.0
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Sequence {
+public interface StatementHandler {
 
-	/**
-	 * 
-	 * 设置序列名称.
-	 * 
-	 * @return
-	 */
-	String value() default "";
+	Statement prepare(Connection connection) throws SQLException;
 
-	/**
-	 * 
-	 * TODO.
-	 * 
-	 * @return
-	 */
-	Class<?> sequenceType() default SequenceGenerater.class;
+	void batch(Statement statement) throws SQLException;
+
+	int update(Statement statement) throws SQLException;
+
+	<E> List<E> query(Statement statement, ResultHandler<E> resultHandler) throws SQLException;
+
 }
