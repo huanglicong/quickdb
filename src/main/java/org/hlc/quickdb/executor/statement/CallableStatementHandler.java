@@ -15,14 +15,17 @@
  */
 package org.hlc.quickdb.executor.statement;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hlc.quickdb.builder.SqlSource;
+import org.hlc.quickdb.exception.PersistenceException;
 import org.hlc.quickdb.executor.parameter.StatementParameter;
 import org.hlc.quickdb.executor.result.ResultHandler;
 
@@ -35,50 +38,53 @@ import org.hlc.quickdb.executor.result.ResultHandler;
 public class CallableStatementHandler implements StatementHandler {
 
 	protected final Log logger = LogFactory.getLog(getClass());
-	private final String sql;
-	private final List<StatementParameter<?>> params;
+	private SqlSource sql;
 
-	public CallableStatementHandler(SqlSource sqlSource) {
-
-		this.sql = sqlSource.getSql();
-		this.params = sqlSource.getParams();
+	public CallableStatementHandler(SqlSource sql) {
+		this.sql = sql;
 	}
 
 	@Override
 	public Statement prepare(Connection connection) throws SQLException {
 
-		return connection.prepareCall(sql);
+		return connection.prepareCall(sql.getSql());
 	}
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void parameterize(Statement statement) throws SQLException {
+	public void batchParameterize(CallableStatement statement) throws SQLException {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(sql);
-			logger.debug(params);
-		}
-		for (StatementParameter item : params) {
-			item.parameterize(statement);
-		}
 	}
 
 	@Override
-	public void batch(Statement statement) throws SQLException {
+	public int[] batch(Statement statement) throws SQLException {
 
+		return null;
+	}
+
+	public void parameterize(CallableStatement statement) throws SQLException {
+		Iterator<StatementParameter[]> iterator = sql.iterator();
+		StatementParameter[] temps = null;
+		if (iterator.hasNext()) {
+			temps = iterator.next();
+			for (StatementParameter item : temps) {
+				item.parameterize(statement);
+			}
+		}
 	}
 
 	@Override
 	public int update(Statement statement) throws SQLException {
 
-		return 0;
+		if (statement instanceof CallableStatement) {
+			parameterize((CallableStatement) statement);
+			return ((CallableStatement) statement).execute() ? 1 : -1;
+		}
+		throw new PersistenceException(statement.getClass() + "不是CallableStatement类型");
 	}
 
 	@Override
 	public <E> List<E> query(Statement statement, ResultHandler<E> resultHandler) throws SQLException {
 
 		return null;
-
 	}
 
 }

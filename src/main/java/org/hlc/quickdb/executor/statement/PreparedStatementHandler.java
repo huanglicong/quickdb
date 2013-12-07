@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -39,39 +40,58 @@ import org.hlc.quickdb.executor.result.ResultHandler;
 public class PreparedStatementHandler implements StatementHandler {
 
 	protected final Log logger = LogFactory.getLog(getClass());
-	private SqlSource sqlWrapper;
+	private SqlSource sql;
 
-	public PreparedStatementHandler(SqlSource sqlWrapper) {
-		this.sqlWrapper = sqlWrapper;
+	public PreparedStatementHandler(SqlSource sql) {
+		this.sql = sql;
 	}
 
 	@Override
 	public Statement prepare(Connection connection) throws SQLException {
-		return connection.prepareStatement(sqlWrapper.getSql());
+		return connection.prepareStatement(sql.getSql());
 	}
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void parameterize(Statement statement) throws SQLException {
-
+	public void batchParameterize(Statement statement) throws SQLException {
+		PreparedStatement preparedStatement = ((PreparedStatement) statement);
 		if (logger.isDebugEnabled()) {
-			logger.debug(sqlWrapper);
-			logger.debug(params);
+			logger.debug(sql);
 		}
-		for (StatementParameter item : params) {
-			item.parameterize(statement);
+		Iterator<StatementParameter[]> iterator = sql.iterator();
+		StatementParameter[] temps = null;
+		while (iterator.hasNext()) {
+			temps = iterator.next();
+			for (StatementParameter item : temps) {
+				item.parameterize(statement);
+			}
+			preparedStatement.addBatch();
 		}
 	}
 
 	@Override
-	public void batch(Statement statement) throws SQLException {
+	public int[] batch(Statement statement) throws SQLException {
+		if (statement instanceof PreparedStatement) {
+			batchParameterize(statement);
+			return ((PreparedStatement) statement).executeBatch();
+		}
+		throw new PersistenceException(statement.getClass() + "不是PreparedStatement类型");
+	}
 
+	public void parameterize(Statement statement) throws SQLException {
+		Iterator<StatementParameter[]> iterator = sql.iterator();
+		StatementParameter[] temps = null;
+		if (iterator.hasNext()) {
+			temps = iterator.next();
+			for (StatementParameter item : temps) {
+				item.parameterize(statement);
+			}
+		}
 	}
 
 	@Override
 	public int update(Statement statement) throws SQLException {
 
 		if (statement instanceof PreparedStatement) {
+			parameterize(statement);
 			return ((PreparedStatement) statement).executeUpdate();
 		}
 		throw new PersistenceException(statement.getClass() + "不是PreparedStatement类型");
@@ -81,6 +101,7 @@ public class PreparedStatementHandler implements StatementHandler {
 	public <E> List<E> query(Statement statement, ResultHandler<E> resultHandler) throws SQLException {
 
 		if (statement instanceof PreparedStatement) {
+			parameterize(statement);
 			ResultSet resultSet = ((PreparedStatement) statement).executeQuery();
 			return resultHandler.handleResult(resultSet);
 		}

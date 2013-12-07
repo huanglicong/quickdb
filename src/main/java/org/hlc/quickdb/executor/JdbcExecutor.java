@@ -49,18 +49,14 @@ public class JdbcExecutor implements Executor {
 	}
 
 	@Override
-	public int doUpdate(String sql, Object params) {
+	public int doUpdate(SqlSource sql) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(sql);
 		}
-		SqlSource wsql = new SqlSource(sql, params, configuration);
-		StatementHandler statementHandler = configuration.newStatementHandler(wsql);
+		StatementHandler statementHandler = configuration.newStatementHandler(sql);
 		try {
 			Statement statement = statementHandler.prepare(transaction.getConnection());
-			if (params != null) {
-				statementHandler.parameterize(statement);
-			}
 			return statementHandler.update(statement);
 		} catch (SQLException e) {
 			throw new SessionException("执行更新错误", e);
@@ -68,20 +64,63 @@ public class JdbcExecutor implements Executor {
 	}
 
 	@Override
-	public <T> List<T> doQuery(String sql, Object params, Class<T> type) {
+	public int[] doBatchUpdate(SqlSource sql) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(sql);
+		}
+		StatementHandler statementHandler = configuration.newStatementHandler(sql);
+		try {
+			Statement statement = statementHandler.prepare(transaction.getConnection());
+			return statementHandler.batch(statement);
+		} catch (SQLException e) {
+			throw new SessionException("执行更新错误", e);
+		}
+	}
+
+	@Override
+	public <T> List<T> doQuery(SqlSource sql, Class<T> type) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(sql);
 		}
-		SqlSource wsql = new SqlSource(sql, params, configuration);
-		StatementHandler statementHandler = configuration.newStatementHandler(wsql);
+		StatementHandler statementHandler = configuration.newStatementHandler(sql);
 		Statement statement = null;
 		try {
 			statement = statementHandler.prepare(transaction.getConnection());
-			if (params != null) {
-				statementHandler.parameterize(statement);
-			}
 			return statementHandler.query(statement, configuration.newResultHandler(type));
+		} catch (SQLException e) {
+			throw new SessionException("执行查询错误", e);
+		} finally {
+			DatabaseUtils.colseStatement(statement);
+		}
+	}
+
+	@Override
+	public int doUpdateCallable(SqlSource call) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug(call);
+		}
+		StatementHandler statementHandler = configuration.newCallableStatement(call);
+		try {
+			Statement statement = statementHandler.prepare(transaction.getConnection());
+			return statementHandler.update(statement);
+		} catch (SQLException e) {
+			throw new SessionException("执行更新错误", e);
+		}
+	}
+
+	@Override
+	public <T> List<T> doQueryCallable(SqlSource call, Class<T> resultType) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug(call);
+		}
+		StatementHandler statementHandler = configuration.newCallableStatement(call);
+		Statement statement = null;
+		try {
+			statement = statementHandler.prepare(transaction.getConnection());
+			return statementHandler.query(statement, configuration.newResultHandler(resultType));
 		} catch (SQLException e) {
 			throw new SessionException("执行查询错误", e);
 		} finally {
@@ -118,22 +157,6 @@ public class JdbcExecutor implements Executor {
 	public boolean isClosed() {
 
 		return closed;
-	}
-
-	@Override
-	public int doUpdateCallable(String call, Object params) {
-
-		// TODO Auto-generated method stub
-		return 0;
-
-	}
-
-	@Override
-	public <T> List<T> doQueryCallable(String call, Object params, Class<T> resultType) {
-
-		// TODO Auto-generated method stub
-		return null;
-
 	}
 
 }

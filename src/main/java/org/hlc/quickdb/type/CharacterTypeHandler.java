@@ -28,6 +28,10 @@ import java.sql.SQLException;
  */
 public class CharacterTypeHandler extends BaseTypeHandler<Character> {
 
+	public CharacterTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

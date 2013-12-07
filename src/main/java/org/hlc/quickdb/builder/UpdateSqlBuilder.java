@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.hlc.quickdb.executor.parameter.StatementParameter;
 import org.hlc.quickdb.metadata.ColumnMetadata;
 import org.hlc.quickdb.metadata.TableMetadata;
 
@@ -45,7 +46,7 @@ public class UpdateSqlBuilder extends BaseSqlBuilder {
 	}
 
 	@Override
-	public String build() {
+	public SqlSource build() {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -58,26 +59,31 @@ public class UpdateSqlBuilder extends BaseSqlBuilder {
 		}
 
 		// 2.构建设值部分
+		int index = 0;
+		Object value = null;
+		List<StatementParameter> params = new ArrayList<StatementParameter>();
 		sql.append(" set ");
 		Iterator<ColumnMetadata> iterator = table.getNotPrimarykeys().iterator();
 		ColumnMetadata temp = null;
 		List<ColumnMetadata> list = new ArrayList<ColumnMetadata>();
 		while (iterator.hasNext()) {
 			temp = iterator.next();
-			if (selective && getValue(record, temp.getField()) == null) {
+			value = getValue(record, temp.getField());
+			if (selective && value == null && !temp.isPrimaryKey()) {
 				continue;
 			}
+			params.add(new StatementParameter(index, temp.getTypeHandler(), value));
 			list.add(temp);
 		}
 		int size = list.size();
-		int index = 0;
+		index = 0;
 		for (ColumnMetadata item : list) {
 			if (capital) {
 				sql.append(item.getName().toUpperCase(Locale.getDefault()));
 			} else {
 				sql.append(item.getName());
 			}
-			sql.append(" = ${" + item.getField().getName() + "}");
+			sql.append(" = ?");
 			if (index < size - 1) {
 				sql.append(", ");
 			}
@@ -94,16 +100,26 @@ public class UpdateSqlBuilder extends BaseSqlBuilder {
 		index = 0;
 		while (keyIterator.hasNext()) {
 			temp = keyIterator.next();
+			if (size > 1) {
+				value = getValue(this.record, temp.getField());
+			} else {
+				value = params;
+			}
 			if (getValue(record, temp.getField()) == null) {
 				throw new IllegalArgumentException(temp.getName() + "主键字段值不能为空");
 			}
-			sql.append(temp.getName()).append(" = ${" + temp.getField().getName() + "}");
+			sql.append(temp.getName()).append(" = ?");
 			if (index < size - 1) {
 				sql.append(" and ");
 			}
+			params.add(new StatementParameter(index, temp.getTypeHandler(), value));
 			index++;
 		}
-		return sql.toString();
+
+		SqlSource sqlSource = new SqlSource();
+		sqlSource.setSql(sql.toString());
+		sqlSource.add(params.toArray(new StatementParameter[] {}));
+		return sqlSource;
 	}
 
 }

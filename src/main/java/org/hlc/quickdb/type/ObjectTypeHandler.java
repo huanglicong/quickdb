@@ -28,6 +28,10 @@ import java.sql.SQLException;
  */
 public class ObjectTypeHandler extends BaseTypeHandler<Object> {
 
+	public ObjectTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

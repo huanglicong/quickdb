@@ -33,7 +33,7 @@ public interface StatementHandler {
 
 	Statement prepare(Connection connection) throws SQLException;
 
-	void batch(Statement statement) throws SQLException;
+	int[] batch(Statement statement) throws SQLException;
 
 	int update(Statement statement) throws SQLException;
 

@@ -28,6 +28,10 @@ import java.sql.SQLException;
  */
 public class FloatTypeHandler extends BaseTypeHandler<Float> {
 
+	public FloatTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

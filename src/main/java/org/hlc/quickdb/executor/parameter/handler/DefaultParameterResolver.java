@@ -55,7 +55,7 @@ public class DefaultParameterResolver extends AbstractParameterResolver {
 		if (typeHandler == null) {
 			throw new BuilderException("没有找到支持" + value.getClass() + "类型的处理器");
 		}
-		addParameter(new StatementParameter(paramName, index, 0, typeHandler, null, value));
+		addParameter(new StatementParameter(index, typeHandler, value));
 		return "?";
 	}
 }

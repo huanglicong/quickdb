@@ -30,6 +30,10 @@ import java.util.Date;
  */
 public class DateTypeHandler extends BaseTypeHandler<Date> {
 
+	public DateTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

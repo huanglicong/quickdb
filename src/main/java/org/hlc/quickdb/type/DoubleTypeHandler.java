@@ -28,6 +28,10 @@ import java.sql.SQLException;
  */
 public class DoubleTypeHandler extends BaseTypeHandler<Double> {
 
+	public DoubleTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

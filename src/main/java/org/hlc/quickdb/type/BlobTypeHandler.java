@@ -30,6 +30,10 @@ import java.sql.SQLException;
  */
 public class BlobTypeHandler extends BaseTypeHandler<byte[]> {
 
+	public BlobTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

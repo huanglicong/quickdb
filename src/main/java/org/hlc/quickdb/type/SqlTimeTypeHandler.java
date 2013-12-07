@@ -29,6 +29,10 @@ import java.sql.Time;
  */
 public class SqlTimeTypeHandler extends BaseTypeHandler<Time> {
 
+	public SqlTimeTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

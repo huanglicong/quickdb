@@ -29,6 +29,10 @@ import java.sql.Timestamp;
  */
 public class SqlTimestampTypeHandler extends BaseTypeHandler<Timestamp> {
 
+	public SqlTimestampTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

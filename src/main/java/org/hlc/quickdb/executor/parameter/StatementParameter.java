@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.hlc.quickdb.exception.PersistenceException;
-import org.hlc.quickdb.executor.sequence.SequenceGenerater;
 import org.hlc.quickdb.type.TypeHandler;
 
 /**
@@ -29,92 +28,53 @@ import org.hlc.quickdb.type.TypeHandler;
  * @author huanglicong
  * @since 1.0 2013年11月23日 下午11:11:55
  */
-public class StatementParameter<T> {
+public class StatementParameter {
 
 	private int index;
-	private String name;
-	private TypeHandler<T> typeHandler;
-	private SequenceGenerater sequenceGenerater;
-	private T value;
-	private int jdbcType;
+	@SuppressWarnings("rawtypes")
+	private TypeHandler typeHandler;
+	private Object value;
 
-	public StatementParameter(String name, int index, int jdbcType, TypeHandler<T> typeHandler, SequenceGenerater sequenceGenerater, T value) {
-
+	@SuppressWarnings("rawtypes")
+	public StatementParameter(int index, TypeHandler typeHandler, Object value) {
 		this.index = index;
-		this.name = name;
 		this.typeHandler = typeHandler;
-		this.sequenceGenerater = sequenceGenerater;
 		this.value = value;
-		this.jdbcType = jdbcType;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void parameterize(Statement statement) throws SQLException {
-
 		if (statement instanceof PreparedStatement) {
-			typeHandler.setParameter((PreparedStatement) statement, index, value, jdbcType);
+			typeHandler.setParameter((PreparedStatement) statement, index, value, typeHandler.getJdbcType());
 		} else {
 			throw new PersistenceException(statement.getClass() + "不是PreparedStatement类型");
 		}
 	}
 
-	public String getName() {
-
-		return name;
-	}
-
-	public void setName(String name) {
-
-		this.name = name;
-	}
-
-	public TypeHandler<?> getTypeHandler() {
-
-		return typeHandler;
-	}
-
-	public void setTypeHandler(TypeHandler<T> typeHandler) {
-
-		this.typeHandler = typeHandler;
-	}
-
-	public T getValue() {
-
-		return value;
-	}
-
-	public void setValue(T value) {
-
-		this.value = value;
-	}
-
-	public SequenceGenerater getSequenceGenerater() {
-
-		return sequenceGenerater;
-	}
-
-	public void setSequenceGenerater(SequenceGenerater sequenceGenerater) {
-
-		this.sequenceGenerater = sequenceGenerater;
-	}
-
 	public int getIndex() {
-
 		return index;
 	}
 
 	public void setIndex(int index) {
-
 		this.index = index;
 	}
 
-	public int getJdbcType() {
-
-		return jdbcType;
+	@SuppressWarnings("rawtypes")
+	public TypeHandler getTypeHandler() {
+		return typeHandler;
 	}
 
-	public void setJdbcType(int jdbcType) {
+	@SuppressWarnings("rawtypes")
+	public void setTypeHandler(TypeHandler typeHandler) {
+		this.typeHandler = typeHandler;
+	}
 
-		this.jdbcType = jdbcType;
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
 	}
 
 }

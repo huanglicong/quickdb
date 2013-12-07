@@ -30,6 +30,10 @@ import java.sql.SQLException;
  */
 public class ClobTypeHandler extends BaseTypeHandler<String> {
 
+	public ClobTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

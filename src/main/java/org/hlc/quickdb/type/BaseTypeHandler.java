@@ -28,6 +28,12 @@ import java.sql.SQLException;
  */
 public abstract class BaseTypeHandler<T> implements TypeHandler<T> {
 
+	private int jdbcType;
+
+	public BaseTypeHandler(int jdbcType) {
+		this.jdbcType = jdbcType;
+	}
+
 	@Override
 	public void setParameter(PreparedStatement statement, int index, T parameter, int jdbcType) throws SQLException {
 
@@ -78,5 +84,10 @@ public abstract class BaseTypeHandler<T> implements TypeHandler<T> {
 	public abstract T getNullableResult(ResultSet resultSet, int columnIndex) throws SQLException;
 
 	public abstract T getNullableResult(CallableStatement callableStatement, int columnIndex) throws SQLException;
+
+	@Override
+	public int getJdbcType() {
+		return jdbcType;
+	}
 
 }

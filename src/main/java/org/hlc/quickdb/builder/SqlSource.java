@@ -15,12 +15,11 @@
  */
 package org.hlc.quickdb.builder;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.hlc.quickdb.executor.parameter.StatementParameter;
-import org.hlc.quickdb.executor.parameter.handler.AbstractParameterResolver;
-import org.hlc.quickdb.session.Configuration;
-import org.hlc.quickdb.util.GenericTokenParser;
 
 /**
  * 
@@ -31,25 +30,41 @@ import org.hlc.quickdb.util.GenericTokenParser;
  */
 public class SqlSource {
 
-	private final String sql;
-	private final List<StatementParameter<?>> params;
+	/** 最终执行的SQL语句 */
+	private String sql;
 
-	public SqlSource(String sql, Object params, Configuration configuration) {
-
-		AbstractParameterResolver parameterHandler = configuration.newParameterResolver((params == null ? null : params.getClass()), params);
-		GenericTokenParser parser = new GenericTokenParser("${", "}", parameterHandler);
-		this.sql = parser.parse(sql);
-		this.params = parameterHandler.getStatementParameterList();
-	}
+	/** 执行SQL所需的参数，支持批处理 */
+	private Set<StatementParameter[]> params = new HashSet<StatementParameter[]>();
 
 	public String getSql() {
-
 		return sql;
 	}
 
-	public List<StatementParameter<?>> getParams() {
+	public void setSql(String sql) {
+		this.sql = sql;
+	}
 
-		return params;
+	public boolean isEmpty() {
+		return params.isEmpty();
+	}
+
+	public Iterator<StatementParameter[]> iterator() {
+		return params.iterator();
+	}
+
+	public boolean add(StatementParameter[] e) {
+		return params.add(e);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SqlSource [sql=");
+		builder.append(sql);
+		builder.append(", params=");
+		builder.append(params);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

@@ -28,6 +28,10 @@ import java.sql.SQLException;
  */
 public class BooleanTypeHandler extends BaseTypeHandler<Boolean> {
 
+	public BooleanTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

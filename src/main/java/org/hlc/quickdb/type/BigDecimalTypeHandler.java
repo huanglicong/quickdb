@@ -29,6 +29,10 @@ import java.sql.SQLException;
  */
 public class BigDecimalTypeHandler extends BaseTypeHandler<BigDecimal> {
 
+	public BigDecimalTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

@@ -31,7 +31,8 @@ public class EnumOrdinalTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
 	private Class<E> type;
 	private final E[] enums;
 
-	public EnumOrdinalTypeHandler(Class<E> type) {
+	public EnumOrdinalTypeHandler(Class<E> type, int jdbcType) {
+		super(jdbcType);
 		if (type == null)
 			throw new IllegalArgumentException("Type argument cannot be null");
 		this.type = type;

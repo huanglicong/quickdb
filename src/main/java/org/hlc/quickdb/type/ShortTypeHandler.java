@@ -28,6 +28,10 @@ import java.sql.SQLException;
  */
 public class ShortTypeHandler extends BaseTypeHandler<Short> {
 
+	public ShortTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

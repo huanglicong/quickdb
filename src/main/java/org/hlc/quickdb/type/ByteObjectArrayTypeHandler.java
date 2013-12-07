@@ -30,6 +30,10 @@ import org.hlc.quickdb.util.ArrayUtils;
  */
 public class ByteObjectArrayTypeHandler extends BaseTypeHandler<Byte[]> {
 
+	public ByteObjectArrayTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hlc.quickdb.builder.SqlCommandType;
+import org.hlc.quickdb.builder.SqlSource;
 import org.hlc.quickdb.executor.Executor;
 import org.hlc.quickdb.session.Configuration;
 import org.hlc.quickdb.session.Session;
@@ -61,9 +62,9 @@ public class DefaultSession implements Session {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int executeUpdate(String sql, Object record) {
+	public int executeUpdate(String sql, Object params) {
 
-		return executor.doUpdate(sql, record);
+		return executor.doUpdate(configuration.newSqlBuilder(sql, params).build());
 	}
 
 	/**
@@ -72,8 +73,8 @@ public class DefaultSession implements Session {
 	@Override
 	public int insert(Object record, boolean selective) {
 
-		String sql = configuration.newSqlBuilder(record.getClass(), record, selective, SqlCommandType.INSERT).build();
-		return executeUpdate(sql, record);
+		SqlSource sql = configuration.newSqlBuilder(record.getClass(), record, selective, SqlCommandType.INSERT).build();
+		return executor.doUpdate(sql);
 	}
 
 	/**
@@ -82,8 +83,8 @@ public class DefaultSession implements Session {
 	@Override
 	public int update(Object record, boolean selective) {
 
-		String sql = configuration.newSqlBuilder(record.getClass(), record, selective, SqlCommandType.UPDATE).build();
-		return executeUpdate(sql, record);
+		SqlSource sql = configuration.newSqlBuilder(record.getClass(), record, selective, SqlCommandType.UPDATE).build();
+		return executor.doUpdate(sql);
 	}
 
 	/**
@@ -101,8 +102,8 @@ public class DefaultSession implements Session {
 	 */
 	@Override
 	public int removeById(Class<?> type, Object id) {
-		String sql = configuration.newSqlBuilder(type, null, false, SqlCommandType.UPDATE).build();
-		return executeUpdate(sql, id);
+		SqlSource sql = configuration.newSqlBuilder(type, id, false, SqlCommandType.DELETE).build();
+		return executor.doUpdate(sql);
 	}
 
 	/**
@@ -110,7 +111,6 @@ public class DefaultSession implements Session {
 	 */
 	@Override
 	public <T> T selectOne(String sql, Object params, Class<T> resultType) {
-
 		List<T> list = selectList(sql, params, resultType);
 		if (list == null || list.isEmpty()) {
 			return null;
@@ -123,8 +123,12 @@ public class DefaultSession implements Session {
 	 */
 	@Override
 	public <T> T selectById(Class<T> type, Object id) {
-		String sql = configuration.newSqlBuilder(type, null, false, SqlCommandType.UPDATE).build();
-		return selectOne(sql, id, type);
+		SqlSource sql = configuration.newSqlBuilder(type, id, false, SqlCommandType.SELECT).build();
+		List<T> list = executor.doQuery(sql, type);
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
+		return list.get(0);
 	}
 
 	/**
@@ -141,7 +145,20 @@ public class DefaultSession implements Session {
 	 */
 	@Override
 	public <T> List<T> selectList(String sql, Object params, Class<T> resultType) {
-		return executor.doQuery(sql, params, resultType);
+		SqlSource sqlSource = configuration.newSqlBuilder(sql, params).build();
+		return executor.doQuery(sqlSource, resultType);
+	}
+
+	@Override
+	public int executeCallable(String call, Object params) {
+		SqlSource sqlSource = configuration.newSqlBuilder(call, params).build();
+		return executor.doUpdateCallable(sqlSource);
+	}
+
+	@Override
+	public <T> List<T> queryCallable(String call, Object params, Class<T> resultType) {
+		SqlSource sqlSource = configuration.newSqlBuilder(call, params).build();
+		return executor.doQueryCallable(sqlSource, resultType);
 	}
 
 	/**
@@ -202,16 +219,6 @@ public class DefaultSession implements Session {
 	@Override
 	public Configuration getConfiguration() {
 		return this.configuration;
-	}
-
-	@Override
-	public int executeCallable(String call, Object params) {
-		return executor.doUpdateCallable(call, params);
-	}
-
-	@Override
-	public <T> List<T> queryCallable(String call, Object params, Class<T> resultType) {
-		return executor.doQueryCallable(call, params, resultType);
 	}
 
 }

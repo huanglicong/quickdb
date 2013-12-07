@@ -28,14 +28,18 @@ import java.sql.SQLException;
  */
 public interface TypeHandler<T> {
 
-	void setParameter(PreparedStatement statement, int index, T parameter, int jdbcType) throws SQLException;
+	void setParameter(PreparedStatement statement, int index, T parameter,
+			int jdbcType) throws SQLException;
 
 	T getResult(ResultSet resultSet, String columnName) throws SQLException;
 
 	T getResult(ResultSet resultSet, int columnIndex) throws SQLException;
 
-	T getResult(CallableStatement callableStatement, int columnIndex) throws SQLException;
+	T getResult(CallableStatement callableStatement, int columnIndex)
+			throws SQLException;
 
 	Class<?> getType();
+
+	int getJdbcType();
 
 }

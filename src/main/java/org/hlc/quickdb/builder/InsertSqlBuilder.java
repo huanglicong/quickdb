@@ -20,8 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.hlc.quickdb.executor.parameter.StatementParameter;
 import org.hlc.quickdb.metadata.ColumnMetadata;
 import org.hlc.quickdb.metadata.TableMetadata;
+import org.hlc.quickdb.session.Session;
 
 /**
  * TODO.
@@ -35,6 +37,7 @@ public class InsertSqlBuilder extends BaseSqlBuilder {
 	private TableMetadata table;
 	private boolean selective;
 	private boolean capital;
+	private Session session;
 
 	public InsertSqlBuilder(Object record, TableMetadata table, boolean selective, boolean capital) {
 
@@ -45,31 +48,42 @@ public class InsertSqlBuilder extends BaseSqlBuilder {
 	}
 
 	@Override
-	public String build() {
+	public SqlSource build() {
 
 		StringBuilder before = new StringBuilder();
 		StringBuilder after = new StringBuilder();
-		Iterator<ColumnMetadata> iterator = table.iterator();
 		ColumnMetadata temp = null;
-
+		Iterator<ColumnMetadata> iterator = table.iterator();
 		List<ColumnMetadata> list = new ArrayList<ColumnMetadata>();
+		List<StatementParameter> params = new ArrayList<StatementParameter>();
+		int index = 0;
+		Object value = null;
+		// 抽取SQL参数
 		while (iterator.hasNext()) {
 			temp = iterator.next();
-			if (selective && getValue(record, temp.getField()) == null) {
+			//自动生成Sequence
+			if (temp.getSequenceGenerater() != null) {
+				temp.getSequenceGenerater().generation(record, session);
+			}
+			value = getValue(record, temp.getField());
+			if (selective && value == null) {
 				continue;
 			}
+			params.add(new StatementParameter(index, temp.getTypeHandler(), value));
 			list.add(temp);
+			index++;
 		}
 
+		// 构建SQL语句
 		int size = list.size();
-		int index = 0;
+		index = 0;
 		for (ColumnMetadata item : list) {
 			if (capital) {
 				before.append(item.getName().toUpperCase(Locale.getDefault()));
 			} else {
 				before.append(item.getName());
 			}
-			after.append("${" + item.getField().getName() + "}");
+			after.append("?");
 			if (index < size - 1) {
 				before.append(", ");
 				after.append(", ");
@@ -92,7 +106,10 @@ public class InsertSqlBuilder extends BaseSqlBuilder {
 		sql.append(")  values  (");
 		sql.append(after);
 		sql.append(")");
-		return sql.toString();
-	}
 
+		SqlSource sqlSource = new SqlSource();
+		sqlSource.setSql(sql.toString());
+		sqlSource.add(params.toArray(new StatementParameter[] {}));
+		return sqlSource;
+	}
 }

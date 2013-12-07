@@ -28,12 +28,14 @@ import org.hlc.quickdb.builder.SqlBuilder;
 import org.hlc.quickdb.builder.SqlCommandType;
 import org.hlc.quickdb.builder.SqlSource;
 import org.hlc.quickdb.builder.UpdateSqlBuilder;
+import org.hlc.quickdb.builder.UserDefinedSqlBuilder;
 import org.hlc.quickdb.executor.Executor;
 import org.hlc.quickdb.executor.JdbcExecutor;
 import org.hlc.quickdb.executor.parameter.handler.AbstractParameterResolver;
 import org.hlc.quickdb.executor.parameter.handler.ParameterResolverFactory;
 import org.hlc.quickdb.executor.result.ResultHandler;
 import org.hlc.quickdb.executor.result.ResultHandlerFactory;
+import org.hlc.quickdb.executor.statement.CallableStatementHandler;
 import org.hlc.quickdb.executor.statement.PreparedStatementHandler;
 import org.hlc.quickdb.executor.statement.StatementHandler;
 import org.hlc.quickdb.metadata.TableMetadata;
@@ -74,20 +76,25 @@ public class Configuration {
 		return metadataRepository.put(arg0.getName(), arg1);
 	}
 
-	public SqlBuilder newSqlBuilder(Class<?> type, Object record, boolean selective, SqlCommandType commandType) {
+	public SqlBuilder newSqlBuilder(Class<?> type, Object params, boolean selective, SqlCommandType commandType) {
 
 		TableMetadata table = findTableMetadata(type);
 		SqlBuilder sqlBuilder = null;
 		if (commandType == SqlCommandType.INSERT) {
-			sqlBuilder = new InsertSqlBuilder(record, table, selective, capital);
+			sqlBuilder = new InsertSqlBuilder(params, table, selective, capital);
 		} else if (commandType == SqlCommandType.UPDATE) {
-			sqlBuilder = new UpdateSqlBuilder(record, table, selective, capital);
+			sqlBuilder = new UpdateSqlBuilder(params, table, selective, capital);
 		} else if (commandType == SqlCommandType.DELETE) {
-			sqlBuilder = new DeleteSqlBuilder(table, capital);
+			sqlBuilder = new DeleteSqlBuilder(params, table, selective);
 		} else if (commandType == SqlCommandType.SELECT) {
-			sqlBuilder = new SelectSqlBuilder(table, capital);
+			sqlBuilder = new SelectSqlBuilder(params, table, selective);
 		}
 		return sqlBuilder;
+	}
+
+	public SqlBuilder newSqlBuilder(String sql, Object params) {
+
+		return new UserDefinedSqlBuilder(sql, params, this);
 	}
 
 	public TableMetadata findTableMetadata(Class<?> type) {
@@ -110,6 +117,10 @@ public class Configuration {
 
 	public StatementHandler newStatementHandler(SqlSource sqlSource) {
 		return new PreparedStatementHandler(sqlSource);
+	}
+
+	public StatementHandler newCallableStatement(SqlSource sqlSource) {
+		return new CallableStatementHandler(sqlSource);
 	}
 
 	public <E> ResultHandler<E> newResultHandler(Class<E> resultType) {

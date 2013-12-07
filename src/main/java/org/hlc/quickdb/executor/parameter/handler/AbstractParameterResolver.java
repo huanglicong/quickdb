@@ -31,7 +31,7 @@ import org.hlc.quickdb.util.TokenHandler;
 public abstract class AbstractParameterResolver implements TokenHandler {
 
 	/** The statement parameter list. */
-	private final List<StatementParameter<?>> statementParameterList = new ArrayList<StatementParameter<?>>();
+	private final List<StatementParameter> statementParameterList = new ArrayList<StatementParameter>();
 
 	/** The target. */
 	protected final Object target;
@@ -42,7 +42,8 @@ public abstract class AbstractParameterResolver implements TokenHandler {
 	/**
 	 * Instantiates a new abstract parameter resolver.
 	 * 
-	 * @param target the target
+	 * @param target
+	 *            the target
 	 */
 	public AbstractParameterResolver(Object target) {
 		this.target = target;
@@ -51,7 +52,8 @@ public abstract class AbstractParameterResolver implements TokenHandler {
 	/**
 	 * Handle token.
 	 * 
-	 * @param content the content
+	 * @param content
+	 *            the content
 	 * @return the string
 	 */
 	@Override
@@ -67,8 +69,10 @@ public abstract class AbstractParameterResolver implements TokenHandler {
 	/**
 	 * Handler.
 	 * 
-	 * @param index the index
-	 * @param paramName the param name
+	 * @param index
+	 *            the index
+	 * @param paramName
+	 *            the param name
 	 * @return the string
 	 */
 	public abstract String handler(int index, String paramName);
@@ -76,9 +80,10 @@ public abstract class AbstractParameterResolver implements TokenHandler {
 	/**
 	 * 添加一个StatementParameter参数.
 	 * 
-	 * @param param the param
+	 * @param param
+	 *            the param
 	 */
-	public void addParameter(StatementParameter<?> param) {
+	public void addParameter(StatementParameter param) {
 
 		this.statementParameterList.add(param);
 	}
@@ -88,7 +93,7 @@ public abstract class AbstractParameterResolver implements TokenHandler {
 	 * 
 	 * @return the statement parameter list
 	 */
-	public List<StatementParameter<?>> getStatementParameterList() {
+	public List<StatementParameter> getStatementParameterList() {
 
 		return statementParameterList;
 	}

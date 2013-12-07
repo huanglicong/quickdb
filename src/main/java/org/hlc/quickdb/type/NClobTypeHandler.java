@@ -30,6 +30,10 @@ import java.sql.SQLException;
  */
 public class NClobTypeHandler extends BaseTypeHandler<String> {
 
+	public NClobTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

@@ -58,7 +58,7 @@ public class MetadateParameterResolver extends AbstractParameterResolver {
 		} catch (OgnlException e) {
 			throw new BuilderException("参数获取错误，", e);
 		}
-		addParameter(new StatementParameter(paramName, index, 0, typeHandler, null, value));
+		addParameter(new StatementParameter(index, typeHandler, value));
 		return "?";
 	}
 

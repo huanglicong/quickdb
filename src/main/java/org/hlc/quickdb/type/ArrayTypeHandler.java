@@ -29,6 +29,10 @@ import java.sql.SQLException;
  */
 public class ArrayTypeHandler extends BaseTypeHandler<Array> {
 
+	public ArrayTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

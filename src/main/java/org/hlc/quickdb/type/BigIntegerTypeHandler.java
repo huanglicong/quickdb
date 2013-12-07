@@ -30,6 +30,10 @@ import java.sql.SQLException;
  */
 public class BigIntegerTypeHandler extends BaseTypeHandler<BigInteger> {
 
+	public BigIntegerTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

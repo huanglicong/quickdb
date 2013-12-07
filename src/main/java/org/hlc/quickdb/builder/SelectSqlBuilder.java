@@ -15,9 +15,12 @@
  */
 package org.hlc.quickdb.builder;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
+import org.hlc.quickdb.executor.parameter.StatementParameter;
 import org.hlc.quickdb.metadata.ColumnMetadata;
 import org.hlc.quickdb.metadata.TableMetadata;
 
@@ -31,15 +34,17 @@ public class SelectSqlBuilder extends BaseSqlBuilder {
 
 	private TableMetadata table;
 	private boolean capital;
+	private Object params;
 
-	public SelectSqlBuilder(TableMetadata table, boolean capital) {
+	public SelectSqlBuilder(Object params, TableMetadata table, boolean capital) {
 
 		this.table = table;
 		this.capital = capital;
+		this.params = params;
 	}
 
 	@Override
-	public String build() {
+	public SqlSource build() {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -55,17 +60,29 @@ public class SelectSqlBuilder extends BaseSqlBuilder {
 		sql.append(" where ");
 		Iterator<ColumnMetadata> keyIterator = table.getPrimarykeys().iterator();
 		ColumnMetadata temp = null;
-		int size = table.getPrimarykeys().size();
+		Object value = null;
 		int index = 0;
+		int size = table.getPrimarykeys().size();
+		List<StatementParameter> params = new ArrayList<StatementParameter>();
 		while (keyIterator.hasNext()) {
 			temp = keyIterator.next();
-			sql.append(temp.getName()).append(" = ${" + temp.getField().getName() + "}");
+			if (size > 1) {
+				value = getValue(this.params, temp.getField());
+			} else {
+				value = params;
+			}
+			sql.append(temp.getName()).append(" = ?");
 			if (index < size - 1) {
 				sql.append(" and ");
 			}
+			params.add(new StatementParameter(index, temp.getTypeHandler(), value));
 			index++;
 		}
-		return sql.toString();
+
+		SqlSource sqlSource = new SqlSource();
+		sqlSource.setSql(sql.toString());
+		sqlSource.add(params.toArray(new StatementParameter[] {}));
+		return sqlSource;
 	}
 
 }

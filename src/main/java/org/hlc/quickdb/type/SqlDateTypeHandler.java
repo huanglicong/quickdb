@@ -29,6 +29,10 @@ import java.sql.SQLException;
  */
 public class SqlDateTypeHandler extends BaseTypeHandler<Date> {
 
+	public SqlDateTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

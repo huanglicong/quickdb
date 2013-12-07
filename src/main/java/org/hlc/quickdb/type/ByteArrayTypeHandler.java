@@ -28,6 +28,10 @@ import java.sql.SQLException;
  */
 public class ByteArrayTypeHandler extends BaseTypeHandler<byte[]> {
 
+	public ByteArrayTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 

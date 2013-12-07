@@ -18,6 +18,7 @@ package org.hlc.quickdb.executor;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.hlc.quickdb.builder.SqlSource;
 import org.hlc.quickdb.transaction.Transaction;
 
 // TODO: Auto-generated Javadoc
@@ -34,41 +35,39 @@ public interface Executor {
 	 * 执行普通更新语句.
 	 * 
 	 * @param sql the sql
-	 * @param params the params
 	 * @return the int
 	 */
-	int doUpdate(String sql, Object params);
+	int doUpdate(SqlSource sql);
+
+	int[] doBatchUpdate(SqlSource sql);
 
 	/**
 	 * 执行普通查询语句.
 	 * 
 	 * @param <T> the generic type
 	 * @param sql the sql
-	 * @param params the params
 	 * @param type the type
 	 * @return the list
 	 */
-	<T> List<T> doQuery(String sql, Object params, Class<T> type);
+	<T> List<T> doQuery(SqlSource sql, Class<T> type);
 
 	/**
 	 * 执行无返回值存储过程.
 	 * 
 	 * @param call the call
-	 * @param params the params
 	 * @return the int
 	 */
-	int doUpdateCallable(String call, Object params);
+	int doUpdateCallable(SqlSource call);
 
 	/**
 	 * 执行存储过程查询.
 	 * 
 	 * @param <T> the generic type
 	 * @param call the call
-	 * @param params the params
 	 * @param resultType the result type
 	 * @return the list
 	 */
-	<T> List<T> doQueryCallable(String call, Object params, Class<T> resultType);
+	<T> List<T> doQueryCallable(SqlSource call, Class<T> resultType);
 
 	/**
 	 * 提交事务.

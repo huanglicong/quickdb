@@ -32,6 +32,10 @@ import org.hlc.quickdb.util.ArrayUtils;
  */
 public class BlobByteObjectArrayTypeHandler extends BaseTypeHandler<Byte[]> {
 
+	public BlobByteObjectArrayTypeHandler(int jdbcType) {
+		super(jdbcType);
+	}
+
 	@Override
 	public Class<?> getType() {
 
